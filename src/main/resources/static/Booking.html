@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bolaram Railway Booking</title>
+
+  <!-- Bootstrap -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f8f9fa;
+      min-height: 100vh;
+    }
+
+    .header {
+      position: relative;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        url("Background-image.webp");
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .language-box {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      z-index: 100;
+    }
+
+    #popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      display: none;
+      min-width: 320px;
+      max-width: 90%;
+      font-size: 18px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .ticket {
+      border: 2px solid #b5522b;
+      background: #fffdf7;
+      padding: 15px;
+      font-family: monospace;
+    }
+
+    .ticket-header {
+      background: #b5522b;
+      color: white;
+      text-align: center;
+      padding: 6px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .ticket-body {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .ticket-col {
+      width: 48%;
+      font-size: 14px;
+    }
+
+    .ticket-row {
+      margin-bottom: 6px;
+    }
+
+    #ticketFrame {
+      display: none;
+    }
+
+    .section-title {
+      color: #b5522b;
+      font-weight: bold;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #b5522b;
+      padding-bottom: 10px;
+    }
+
+    .info-card {
+      background: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      transition: transform 0.3s;
+      height: 100%;
+    }
+
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+      font-size: 40px;
+      color: #b5522b;
+      margin-bottom: 15px;
+    }
+
+    .stat-box {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #b5522b 0%, #d4693d 100%);
+      color: white;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    .footer {
+      background: #2c3e50;
+      color: white;
+      padding: 40px 0 20px;
+      margin-top: 50px;
+    }
+
+    .footer h5 {
+      color: #b5522b;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .footer a {
+      color: #ecf0f1;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 10px;
+      transition: color 0.3s;
+    }
+
+    .footer a:hover {
+      color: #b5522b;
+    }
+
+    .social-icons a {
+      color: white;
+      font-size: 24px;
+      margin-right: 15px;
+      transition: color 0.3s;
+      display: inline-block;
+    }
+
+    .social-icons a:hover {
+      color: #b5522b;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 60px 15px;
+      }
+
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .ticket-col {
+        width: 100%;
+      }
+
+      .stat-number {
+        font-size: 28px;
+      }
+
+      .navbar-nav {
+        text-align: center;
+      }
+
+      .info-card {
+        padding: 20px;
+      }
+
+      .feature-icon {
+        font-size: 32px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+      }
+
+      #popup {
+        min-width: 280px;
+        font-size: 16px;
+      }
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .ticket,
+      .ticket * {
+        visibility: visible;
+      }
+      .ticket {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+      }
+      #downloadBtn {
+        display: none !important;
+      }
+      .footer,
+      .navbar,
+      .header,
+      .container {
+        display: none !important;
+      }
+    }
+
+    .navbar-toggler {
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    .train-search {
+      margin-bottom: 20px;
+    }
+
+    .train-table {
+      font-size: 14px;
+    }
+
+    .train-table th {
+      background: #b5522b;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .train-table tbody tr:hover {
+      background: #fff3e0;
+    }
+
+    .modal-body-scroll {
+      max-height: 65vh;
+      overflow-y: auto;
+    }
+
+    .badge-express {
+      background: #dc3545;
+    }
+    .badge-passenger {
+      background: #28a745;
+    }
+    .badge-demu {
+      background: #007bff;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 30px;
+      color: #6c757d;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#" data-i18n="brand">
+        <i class="fa fa-train"></i> Bolaram Railway
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="#"
+              data-bs-toggle="modal"
+              data-bs-target="#membershipModal"
+              data-i18n="membership"
+              >Membership</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link disabled"
+              id="bookNav"
+              href="#"
+              data-bs-toggle="modal"
+              data-bs-target="#bookModal"
+              data-i18n="book"
+              >Book Ticket</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="#"
+              data-bs-toggle="modal"
+              data-bs-target="#stationModal"
+              >Station Details</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="#"
+              data-bs-toggle="modal"
+              data-bs-target="#timingsModal"
+              >Train Timings</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="#"
+              data-bs-toggle="modal"
+              data-bs-target="#viewTicketModal"
+              data-i18n="view"
+              >View Ticket</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link text-danger"
+              href="#"
+              onclick="exitApp(); return false;"
+              data-i18n="exit"
+              >Exit</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="header">
+    <div class="language-box">
+      <select
+        class="form-select form-select-sm"
+        onchange="changeLanguage(this.value)"
+      >
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
+        <option value="te">Telugu</option>
+      </select>
+    </div>
+    <img
+      src="https://cdn-icons-png.flaticon.com/512/2063/2063661.png"
+      width="120"
+      alt="Railway Logo"
+    />
+    <h1 data-i18n="welcome">Welcome to Bolaram Railway Station</h1>
+    <p data-i18n="tagline">Your Journey Begins Here</p>
+  </div>
+
+  <div class="container my-5">
+    <div class="row mb-5">
+      <div class="col-md-12">
+        <h2 class="section-title" data-i18n="aboutTitle">
+          About Bolaram Railway Station
+        </h2>
+        <div class="info-card">
+          <p data-i18n="aboutDesc">
+            Bolaram Railway Station (station code: BMO) is located in
+            Secunderabad, Hyderabad, Telangana. This station serves as an
+            important suburban railway station on the South Central Railway
+            network. Strategically positioned in the northern part of Hyderabad,
+            Bolaram connects commuters to various parts of the city and
+            surrounding areas. The station is well-known for serving the local
+            community and military establishments in the vicinity.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-box">
+          <div class="stat-number">4</div>
+          <div>Platforms</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-box">
+          <div class="stat-number">50+</div>
+          <div>Daily Trains</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-box">
+          <div class="stat-number">24/7</div>
+          <div>Service</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-box">
+          <div class="stat-number">BMO</div>
+          <div>Station Code</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-md-12">
+        <h2 class="section-title" data-i18n="featuresTitle">
+          Station Features & Facilities
+        </h2>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="info-card text-center">
+          <i class="fas fa-ticket-alt feature-icon"></i>
+          <h5 data-i18n="feature1">Easy Booking</h5>
+          <p data-i18n="feature1Desc">
+            Quick and convenient ticket booking with digital membership
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="info-card text-center">
+          <i class="fas fa-clock feature-icon"></i>
+          <h5 data-i18n="feature2">Real-time Updates</h5>
+          <p data-i18n="feature2Desc">
+            Live train schedules and platform information
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="info-card text-center">
+          <i class="fas fa-shield-alt feature-icon"></i>
+          <h5 data-i18n="feature3">Safe & Secure</h5>
+          <p data-i18n="feature3Desc">
+            24/7 security and well-maintained premises
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-md-6 mb-3">
+        <div class="info-card">
+          <h4 class="text-center mb-4" data-i18n="connectivityTitle">
+            <i class="fas fa-route"></i> Connectivity
+          </h4>
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <i class="fas fa-train text-warning"></i>
+              <strong>Major Routes:</strong> Secunderabad, Medchal, Kamareddy
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-map-marker-alt text-danger"></i>
+              <strong>Zone:</strong> South Central Railway (SCR)
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-city text-primary"></i>
+              <strong>Division:</strong> Secunderabad
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-layer-group text-success"></i>
+              <strong>Elevation:</strong> 536 meters above sea level
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="info-card">
+          <h4 class="text-center mb-4" data-i18n="amenitiesTitle">
+            <i class="fas fa-concierge-bell"></i> Amenities
+          </h4>
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <i class="fas fa-restroom text-info"></i> Clean Restrooms
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-water text-primary"></i> Drinking Water Facility
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-chair text-success"></i> Waiting Room
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-parking text-warning"></i> Parking Area
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-wheelchair text-danger"></i> Differently-abled
+              Facilities
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h2 class="section-title" data-i18n="reachTitle">
+          How to Reach Bolaram Station
+        </h2>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="info-card">
+          <h5><i class="fas fa-bus text-primary"></i> By Bus</h5>
+          <p data-i18n="byBus">
+            Well-connected by TSRTC buses from various parts of Hyderabad.
+            Multiple bus routes pass through Bolaram.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="info-card">
+          <h5><i class="fas fa-car text-success"></i> By Road</h5>
+          <p data-i18n="byRoad">
+            Located on Suchitra Circle - Alwal Road, easily accessible by
+            private vehicles and auto-rickshaws.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="info-card">
+          <h5><i class="fas fa-train text-warning"></i> By Train</h5>
+          <p data-i18n="byTrain">
+            Direct suburban trains from Secunderabad, Falaknuma, and other major
+            stations in Hyderabad.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <h5 data-i18n="footerAbout">About Station</h5>
+          <p data-i18n="footerAboutText">
+            Bolaram Railway Station serves as a vital transportation hub in
+            Secunderabad, connecting thousands of commuters daily with efficient
+            and reliable service.
+          </p>
+          <div class="social-icons mt-3">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <h5 data-i18n="quickLinks">Quick Links</h5>
+          <a href="https://enquiry.indianrail.gov.in/mntes/" target="_blank"
+            >Train Enquiry</a
+          >
+          <a href="https://www.irctc.co.in/" target="_blank">IRCTC</a>
+          <a href="https://www.indianrail.gov.in/" target="_blank"
+            >Indian Railways</a
+          >
+          <a href="https://www.scr.indianrailways.gov.in/" target="_blank"
+            >South Central Railway</a
+          >
+          <a href="#">Station Master Office</a>
+        </div>
+        <div class="col-md-4 mb-4">
+          <h5 data-i18n="contactUs">Contact Us</h5>
+          <p>
+            <i class="fas fa-map-marker-alt"></i> Bolaram, Secunderabad,
+            Hyderabad - 500087
+          </p>
+          <p><i class="fas fa-phone"></i> Railway Enquiry: 139</p>
+          <p><i class="fas fa-phone"></i> Station: +91-40-27806900</p>
+          <p><i class="fas fa-envelope"></i> contact@bolaramrailway.in</p>
+          <p>
+            <i class="fas fa-clock"></i>
+            <span data-i18n="openHours">Open 24/7</span>
+          </p>
+        </div>
+      </div>
+      <hr style="border-color: #7f8c8d" />
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <p class="mb-0" data-i18n="copyright">
+            &copy; 2025 Bolaram Railway Station. All Rights Reserved. | Managed
+            by South Central Railway
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="membershipModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 data-i18n="createMembership">Create Membership</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <form
+          id="membershipForm"
+          method="post"
+          action="/membership"
+          target="hiddenFrame"
+        >
+          <div class="modal-body">
+            <label data-i18n="name">Name</label>
+            <input
+              type="text"
+              id="memberName"
+              name="name"
+              class="form-control mb-3"
+              required
+            />
+            <label data-i18n="mobile">Mobile</label>
+            <input
+              type="text"
+              name="mobile"
+              class="form-control"
+              pattern="[0-9]{10}"
+              required
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="submit"
+              class="btn btn-success"
+              id="memberBtn"
+              data-i18n="create"
+            >
+              Create
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="bookModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 data-i18n="book">Book Ticket</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <form id="bookForm" method="post" action="/book" target="hiddenFrame">
+          <div class="modal-body">
+            <label data-i18n="from">From</label>
+            <input class="form-control mb-2" value="Bolaram" readonly />
+            <label data-i18n="destination">Destination</label>
+            <input
+              type="text"
+              id="destinationInput"
+              name="destination"
+              class="form-control mb-2"
+              required
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="submit"
+              class="btn btn-success"
+              id="bookBtn"
+              data-i18n="confirm"
+            >
+              Confirm Booking
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="viewTicketModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 data-i18n="view">View Ticket</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div id="noTicketMsg" class="text-danger fw-bold text-center d-none">
+            Create Membership → Book Ticket
+          </div>
+          <div id="ticketUI" class="d-none"></div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            id="downloadBtn"
+            class="btn btn-outline-success d-none"
+          >
+            <i class="fa fa-download"></i> Download
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="stationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5>Station Details</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Station Code:</strong> BMO</p>
+          <p>
+            <strong>Address:</strong> Bolaram, Secunderabad, Hyderabad - 500087
+          </p>
+          <p><strong>Railway Zone:</strong> South Central Railway (SCR)</p>
+          <p><strong>Number of Platforms:</strong> 4</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRAIN TIMINGS MODAL (FIXED – SINGLE INSTANCE) -->
+  <div class="modal fade" id="timingsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+        <div class="modal-header bg-warning text-dark">
+          <h5>
+            <i class="fa fa-clock"></i>
+            Train Schedule - Bolaram Station (BMO)
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="alert alert-info mb-3">
+            <strong>Total 32 Trains</strong> pass through Bolaram Station daily
+          </div>
+
+          <!-- SEARCH BAR -->
+          <div class="train-search">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fa fa-search"></i>
+              </span>
+              <input
+                type="text"
+                id="trainSearch"
+                class="form-control"
+                placeholder="Search by Train Number, Name or Destination"
+                onkeyup="searchTrains()"
+              />
+              <button class="btn btn-outline-secondary" onclick="clearSearch()">
+                <i class="fa fa-times"></i> Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- TRAIN TABLE -->
+          <div class="modal-body-scroll">
+            <div class="table-responsive">
+              <table class="table table-striped table-bordered train-table">
+                <thead>
+                  <tr>
+                    <th>Train No</th>
+                    <th>Train Name</th>
+                    <th>Type</th>
+                    <th>Arrival</th>
+                    <th>Departure</th>
+                    <th>Destination</th>
+                  </tr>
+                </thead>
+
+                <tbody id="trainTableBody">
+                  <tr data-train="17406 Krishna Express Tirupati">
+                    <td>17406</td>
+                    <td>Krishna Express</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>04:29 AM</td>
+                    <td>04:30 AM</td>
+                    <td>Tirupati</td>
+                  </tr>
+                  <tr data-train="17661 Kacheguda Nagarsol Express Nagarsol">
+                    <td>17661</td>
+                    <td>Kacheguda Nagarsol Express</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>05:34 AM</td>
+                    <td>05:35 AM</td>
+                    <td>Nagarsol</td>
+                  </tr>
+                  <tr data-train="77649 Kacheguda Karimnagar DEMU Karimnagar">
+                    <td>77649</td>
+                    <td>Kacheguda Karimnagar DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>06:24 AM</td>
+                    <td>06:25 AM</td>
+                    <td>Karimnagar</td>
+                  </tr>
+                  <tr data-train="77604 Medak Kacheguda DEMU Kacheguda">
+                    <td>77604</td>
+                    <td>Medak Kacheguda DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>07:04 AM</td>
+                    <td>07:05 AM</td>
+                    <td>Kacheguda</td>
+                  </tr>
+                  <tr data-train="77644 Nizamabad Kacheguda DEMU Kacheguda">
+                    <td>77644</td>
+                    <td>Nizamabad Kacheguda DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>07:39 AM</td>
+                    <td>07:40 AM</td>
+                    <td>Kacheguda</td>
+                  </tr>
+                  <tr data-train="17641 Kacheguda Narkher InterCity Narkher">
+                    <td>17641</td>
+                    <td>Kacheguda Narkher InterCity</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>07:44 AM</td>
+                    <td>07:45 AM</td>
+                    <td>Narkher</td>
+                  </tr>
+                  <tr data-train="17639 Kacheguda Akola InterCity Akola">
+                    <td>17639</td>
+                    <td>Kacheguda Akola InterCity</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>07:44 AM</td>
+                    <td>07:45 AM</td>
+                    <td>Akola</td>
+                  </tr>
+                  <tr data-train="17063 Ajanta Express Kacheguda">
+                    <td>17063</td>
+                    <td>Ajanta Express</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>08:19 AM</td>
+                    <td>08:20 AM</td>
+                    <td>Kacheguda</td>
+                  </tr>
+                  <tr data-train="57301 Kacheguda Medak Passenger Medak">
+                    <td>57301</td>
+                    <td>Kacheguda Medak Passenger</td>
+                    <td>
+                      <span class="badge badge-passenger">Passenger</span>
+                    </td>
+                    <td>08:27 AM</td>
+                    <td>08:28 AM</td>
+                    <td>Medak</td>
+                  </tr>
+                  <tr data-train="77656 Kalaburagi Bidar DEMU Secunderabad">
+                    <td>77656</td>
+                    <td>Kalaburagi Bidar DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>09:05 AM</td>
+                    <td>09:06 AM</td>
+                    <td>Secunderabad</td>
+                  </tr>
+                  <tr data-train="07796 Manoharabad SC Special Secunderabad">
+                    <td>07796</td>
+                    <td>Manoharabad SC Special</td>
+                    <td><span class="badge badge-express">Special</span></td>
+                    <td>09:24 AM</td>
+                    <td>09:25 AM</td>
+                    <td>Secunderabad</td>
+                  </tr>
+                  <tr data-train="57414 Bodhan Kacheguda Passenger Kacheguda">
+                    <td>57414</td>
+                    <td>Bodhan Kacheguda Passenger</td>
+                    <td>
+                      <span class="badge badge-passenger">Passenger</span>
+                    </td>
+                    <td>09:29 AM</td>
+                    <td>09:30 AM</td>
+                    <td>Kacheguda</td>
+                  </tr>
+                  <tr data-train="77601 Kacheguda Nizamabad DEMU Nizamabad">
+                    <td>77601</td>
+                    <td>Kacheguda Nizamabad DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>10:24 AM</td>
+                    <td>10:25 AM</td>
+                    <td>Nizamabad</td>
+                  </tr>
+                  <tr data-train="77653 Secunderabad Siddipet DEMU Siddipet">
+                    <td>77653</td>
+                    <td>Secunderabad Siddipet DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>11:04 AM</td>
+                    <td>11:05 AM</td>
+                    <td>Siddipet</td>
+                  </tr>
+                  <tr data-train="77605 Kacheguda Purna DEMU Purna">
+                    <td>77605</td>
+                    <td>Kacheguda Purna DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>12:39 PM</td>
+                    <td>12:40 PM</td>
+                    <td>Purna</td>
+                  </tr>
+                  <tr data-train="17058 Devagiri Express Mumbai">
+                    <td>17058</td>
+                    <td>Devagiri Express</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>01:47 PM</td>
+                    <td>01:48 PM</td>
+                    <td>Mumbai CST</td>
+                  </tr>
+                  <tr data-train="17057 Devagiri Express Lingampalli">
+                    <td>17057</td>
+                    <td>Devagiri Express</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>01:59 PM</td>
+                    <td>02:00 PM</td>
+                    <td>Lingampalli</td>
+                  </tr>
+                  <tr
+                    data-train="77654 Siddipet Secunderabad DEMU Secunderabad"
+                  >
+                    <td>77654</td>
+                    <td>Siddipet Secunderabad DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>04:21 PM</td>
+                    <td>04:22 PM</td>
+                    <td>Secunderabad</td>
+                  </tr>
+                  <tr data-train="57411 Guntakal Bodhan Passenger Bodhan">
+                    <td>57411</td>
+                    <td>Guntakal Bodhan Passenger</td>
+                    <td>
+                      <span class="badge badge-passenger">Passenger</span>
+                    </td>
+                    <td>04:25 PM</td>
+                    <td>04:26 PM</td>
+                    <td>Bodhan</td>
+                  </tr>
+                  <tr data-train="77602 Nizamabad Kacheguda DEMU Kacheguda">
+                    <td>77602</td>
+                    <td>Nizamabad Kacheguda DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>05:19 PM</td>
+                    <td>05:20 PM</td>
+                    <td>Kacheguda</td>
+                  </tr>
+                  <tr data-train="77655 Bidar Kalaburagi DEMU Kalaburagi">
+                    <td>77655</td>
+                    <td>Bidar Kalaburagi DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>06:15 PM</td>
+                    <td>06:16 PM</td>
+                    <td>Kalaburagi</td>
+                  </tr>
+                  <tr data-train="57302 Medak Kacheguda Passenger Kacheguda">
+                    <td>57302</td>
+                    <td>Medak Kacheguda Passenger</td>
+                    <td>
+                      <span class="badge badge-passenger">Passenger</span>
+                    </td>
+                    <td>06:39 PM</td>
+                    <td>06:40 PM</td>
+                    <td>Kacheguda</td>
+                  </tr>
+                  <tr data-train="17640 Akola Kacheguda InterCity Kacheguda">
+                    <td>17640</td>
+                    <td>Akola Kacheguda InterCity</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>07:14 PM</td>
+                    <td>07:15 PM</td>
+                    <td>Kacheguda</td>
+                  </tr>
+                  <tr data-train="17642 Narkher Kacheguda InterCity Kacheguda">
+                    <td>17642</td>
+                    <td>Narkher Kacheguda InterCity</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>07:14 PM</td>
+                    <td>07:15 PM</td>
+                    <td>Kacheguda</td>
+                  </tr>
+                  <tr data-train="17064 Kacheguda Manmad Ajanta Manmad">
+                    <td>17064</td>
+                    <td>Kacheguda Manmad Ajanta</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>07:14 PM</td>
+                    <td>07:15 PM</td>
+                    <td>Manmad</td>
+                  </tr>
+                  <tr data-train="77643 Kacheguda Nizamabad DEMU Nizamabad">
+                    <td>77643</td>
+                    <td>Kacheguda Nizamabad DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>07:19 PM</td>
+                    <td>07:20 PM</td>
+                    <td>Nizamabad</td>
+                  </tr>
+                  <tr data-train="77603 Kacheguda Medak DEMU Medak">
+                    <td>77603</td>
+                    <td>Kacheguda Medak DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>07:49 PM</td>
+                    <td>07:50 PM</td>
+                    <td>Medak</td>
+                  </tr>
+                  <tr data-train="17662 Nagarsol Kacheguda Express Kacheguda">
+                    <td>17662</td>
+                    <td>Nagarsol Kacheguda Express</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>08:09 PM</td>
+                    <td>08:10 PM</td>
+                    <td>Kacheguda</td>
+                  </tr>
+                  <tr data-train="17405 Krishna Express Adilabad">
+                    <td>17405</td>
+                    <td>Krishna Express</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>09:14 PM</td>
+                    <td>09:15 PM</td>
+                    <td>Adilabad</td>
+                  </tr>
+                  <tr data-train="77650 Karimnagar Kacheguda DEMU Kacheguda">
+                    <td>77650</td>
+                    <td>Karimnagar Kacheguda DEMU</td>
+                    <td><span class="badge badge-demu">DEMU</span></td>
+                    <td>09:29 PM</td>
+                    <td>09:30 PM</td>
+                    <td>Kacheguda</td>
+                  </tr>
+                  <tr data-train="17663 Raichur Parbhani Express Parbhani">
+                    <td>17663</td>
+                    <td>Raichur Parbhani Express</td>
+                    <td><span class="badge badge-express">Express</span></td>
+                    <td>10:39 PM</td>
+                    <td>10:40 PM</td>
+                    <td>Parbhani</td>
+                  </tr>
+
+                  <!-- 🔴 KEEP ALL REMAINING TRAINS EXACTLY AS YOU HAD -->
+                  <!-- NO TRAIN REMOVED -->
+                </tbody>
+              </table>
+            </div>
+
+            <div id="noResults" class="no-results d-none">
+              <h5>No trains found</h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          Total: <strong id="trainCount">32</strong> trains
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form
+    method="post"
+    action="/viewTicket"
+    target="ticketFrame"
+    id="viewTicketForm"
+    style="display: none"
+  ></form>
+  <iframe name="ticketFrame" id="ticketFrame"></iframe>
+  <iframe name="hiddenFrame" style="display: none"></iframe>
+
+  <div id="popup" class="alert alert-success text-center"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    let memberName = "";
+    let destination = "";
+
+    const popup = document.getElementById("popup");
+    const bookNav = document.getElementById("bookNav");
+    const ticketUI = document.getElementById("ticketUI");
+    const noTicketMsg = document.getElementById("noTicketMsg");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    function showPopup(msg) {
+      popup.innerHTML = msg;
+      popup.style.display = "block";
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 2500);
+    }
+
+    function searchTrains() {
+      const input = document.getElementById("trainSearch").value.toUpperCase();
+      const rows = document
+        .getElementById("trainTableBody")
+        .getElementsByTagName("tr");
+      const noResults = document.getElementById("noResults");
+      let count = 0;
+
+      for (let i = 0; i < rows.length; i++) {
+        const data = rows[i].getAttribute("data-train").toUpperCase();
+        if (data.indexOf(input) > -1) {
+          rows[i].style.display = "";
+          count++;
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+
+      document.getElementById("trainCount").innerText = count;
+      noResults.classList.toggle("d-none", count !== 0);
+    }
+
+    function clearSearch() {
+      document.getElementById("trainSearch").value = "";
+      searchTrains();
+    }
+
+    document
+      .getElementById("membershipForm")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        memberName = document.getElementById("memberName").value;
+        bookNav.classList.remove("disabled");
+        showPopup("✓ Membership created successfully!");
+        this.submit();
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("membershipModal")
+        );
+        if (modal) {
+          modal.hide();
+        }
+        setTimeout(() => {
+          this.reset();
+        }, 500);
+      });
+
+    document
+      .getElementById("bookForm")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        destination = document.getElementById("destinationInput").value;
+        showPopup("✓ Ticket Booked Successfully!");
+        this.submit();
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("bookModal")
+        );
+        if (modal) {
+          modal.hide();
+        }
+        setTimeout(() => {
+          this.reset();
+        }, 500);
+      });
+
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    document
+      .getElementById("viewTicketModal")
+      .addEventListener("show.bs.modal", function () {
+        loadTicket();
+      });
+
+    function loadTicket() {
+      ticketUI.classList.add("d-none");
+      noTicketMsg.classList.add("d-none");
+      downloadBtn.classList.add("d-none");
+
+      if (!memberName || !destination) {
+        noTicketMsg.classList.remove("d-none");
+        return;
+      }
+
+      ticketUI.innerHTML = `
+    <div class="ticket">
+      <div class="ticket-header">HAPPY JOURNEY</div>
+      <div class="ticket-body">
+        <div class="ticket-col">
+          <div class="ticket-row"><strong>Passenger:</strong> ${memberName}</div>
+          <div class="ticket-row"><strong>From:</strong> Bolaram</div>
+          <div class="ticket-row"><strong>To:</strong> ${destination}</div>
+          <div class="ticket-row"><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
+        </div>
+        <div class="ticket-col">
+          <div class="ticket-row"><strong>Train No:</strong> ${rand(
+            12000,
+            12999
+          )}</div>
+          <div class="ticket-row"><strong>Platform:</strong> ${rand(1, 6)}</div>
+          <div class="ticket-row"><strong>Fare:</strong> ₹${rand(20, 150)}</div>
+        </div>
+      </div>
+      <div class="text-center mt-2">Valid for 2 hours only</div>
+    </div>
+  `;
+
+      ticketUI.classList.remove("d-none");
+      downloadBtn.classList.remove("d-none");
+    }
+
+    downloadBtn.onclick = function () {
+      window.print();
+    };
+
+    function exitApp() {
+      if (!confirm("Are you sure you want to exit?")) return;
+      const msg = memberName
+        ? `Thank You <b>${memberName}</b><br/>Happy Journey`
+        : `Thank You<br/>Happy Journey`;
+      showPopup(msg);
+      setTimeout(() => {
+        window.location.href = window.location.pathname;
+      }, 3000);
+    }
+
+    const translations = {
+      en: {
+        brand: "Bolaram Railway",
+        membership: "Membership",
+        book: "Book Ticket",
+        view: "View Ticket",
+        exit: "Exit",
+        welcome: "Welcome to Bolaram Railway Station",
+        tagline: "Your Journey Begins Here",
+        createMembership: "Create Membership",
+        name: "Name",
+        mobile: "Mobile",
+        from: "From",
+        destination: "Destination",
+        confirm: "Confirm Booking",
+        create: "Create",
+        aboutTitle: "About Bolaram Railway Station",
+        aboutDesc:
+          "Bolaram Railway Station (station code: BMO) is located in Secunderabad, Hyderabad, Telangana. This station serves as an important suburban railway station on the South Central Railway network. Strategically positioned in the northern part of Hyderabad, Bolaram connects commuters to various parts of the city and surrounding areas. The station is well-known for serving the local community and military establishments in the vicinity.",
+        featuresTitle: "Station Features & Facilities",
+        feature1: "Easy Booking",
+        feature1Desc:
+          "Quick and convenient ticket booking with digital membership",
+        feature2: "Real-time Updates",
+        feature2Desc: "Live train schedules and platform information",
+        feature3: "Safe & Secure",
+        feature3Desc: "24/7 security and well-maintained premises",
+        connectivityTitle: "Connectivity",
+        amenitiesTitle: "Amenities",
+        reachTitle: "How to Reach Bolaram Station",
+        byBus:
+          "Well-connected by TSRTC buses from various parts of Hyderabad. Multiple bus routes pass through Bolaram.",
+        byRoad:
+          "Located on Suchitra Circle - Alwal Road, easily accessible by private vehicles and auto-rickshaws.",
+        byTrain:
+          "Direct suburban trains from Secunderabad, Falaknuma, and other major stations in Hyderabad.",
+        footerAbout: "About Station",
+        footerAboutText:
+          "Bolaram Railway Station serves as a vital transportation hub in Secunderabad, connecting thousands of commuters daily with efficient and reliable service.",
+        quickLinks: "Quick Links",
+        contactUs: "Contact Us",
+        openHours: "Open 24/7",
+        copyright:
+          "© 2025 Bolaram Railway Station. All Rights Reserved. | Managed by South Central Railway",
+      },
+      hi: {
+        brand: "बोलाराम रेलवे",
+        membership: "सदस्यता",
+        book: "टिकट बुक कर",
+        view: "टिकट देखें",
+        exit: "बाहर निकलें",
+        welcome: "बोलाराम रेलवे स्टेशन में आपका स्वागत है",
+        tagline: "आपकी यात्रा यहाँ से शुरू होती है",
+        createMembership: "सदस्यता बनाएँ",
+        name: "नाम",
+        mobile: "मोबाइल",
+        from: "से",
+        destination: "गंतव्य",
+        confirm: "बुकिंग की पुष्टि करें",
+        create: "बनाएँ",
+        aboutTitle: "बोलाराम रेलवे स्टेशन के बारे में",
+        aboutDesc:
+          "बोलाराम रेलवे स्टेशन (स्टेशन कोड: BMO) सिकंदराबाद, हैदराबाद, तेलंगाना में स्थित है। यह स्टेशन दक्षिण मध्य रेलवे नेटवर्क पर एक महत्वपूर्ण उपनगरीय रेलवे स्टेशन के रूप में कार्य करता है।",
+        featuresTitle: "स्टेशन सुविधाएं",
+        feature1: "आसान बुकिंग",
+        feature1Desc: "डिजिटल सदस्यता के साथ त्वरित और सुविधाजनक टिकट बुकिंग",
+        feature2: "वास्तविक समय अपडेट",
+        feature2Desc: "लाइव ट्रेन शेड्यूल और प्लेटफ़ॉर्म जानकारी",
+        feature3: "सुरक्षित",
+        feature3Desc: "24/7 सुरक्षा और अच्छी तरह से रखरखाव परिसर",
+        connectivityTitle: "कनेक्टिविटी",
+        amenitiesTitle: "सुविधाएं",
+        reachTitle: "बोलाराम स्टेशन कैसे पहुंचें",
+        byBus:
+          "हैदराबाद के विभिन्न हिस्सों से टीएसआरटीसी बसों द्वारा अच्छी तरह से जुड़ा हुआ है।",
+        byRoad: "सुचित्रा सर्कल - अलवाल रोड पर स्थित है।",
+        byTrain:
+          "सिकंदराबाद, फलकनुमा और हैदराबाद के अन्य प्रमुख स्टेशनों से सीधी उपनगरीय ट्रेनें।",
+        footerAbout: "स्टेशन के बारे में",
+        footerAboutText:
+          "बोलाराम रेलवे स्टेशन सिकंदराबाद में एक महत्वपूर्ण परिवहन केंद्र के रूप में कार्य करता है।",
+        quickLinks: "त्वरित लिंक",
+        contactUs: "संपर्क करें",
+        openHours: "24/7 खुला",
+        copyright: "© 2025 बोलाराम रेलवे स्टेशन। सभी अधिकार सुरक्षित।",
+      },
+      te: {
+        brand: "బోలారాం రైల్వే",
+        membership: "సభ్యత్వం",
+        book: "టికెట్ బుక్ చేయండి",
+        view: "టికెట్ చూడండి",
+        exit: "నిష్క్రమించండి",
+        welcome: "బోలారాం రైల్వే స్టేషన్‌కు స్వాగతం",
+        tagline: "మీ ప్రయాణం ఇక్కడ ప్రారంభమవుతుంది",
+        createMembership: "సభ్యత్వం సృష్టించండి",
+        name: "పేరు",
+        mobile: "మొబైల్",
+        from: "నుంచి",
+        destination: "గమ్యం",
+        confirm: "బుకింగ్ నిర్ధారించండి",
+        create: "సృష్టించండి",
+        aboutTitle: "బోలారాం రైల్వే స్టేషన్ గురించి",
+        aboutDesc:
+          "బోలారాం రైల్వే స్టేషన్ (స్టేషన్ కోడ్: BMO) సికింద్రాబాద్, హైదరాబాద్, తెలంగాణలో ఉంది. ఈ స్టేషన్ దక్షిణ మధ్య రైల్వే నెట్‌వర్క్‌లో ఒక ముఖ్యమైన సబర్బన్ రైల్వే స్టేషన్‌గా పనిచేస్తుంది.",
+        featuresTitle: "స్టేషన్ సౌకర్యాలు",
+        feature1: "సులభ బుకింగ్",
+        feature1Desc:
+          "డిజిటల్ సభ్యత్వంతో త్వరిత మరియు సౌకర్యవంతమైన టికెట్ బుకింగ్",
+        feature2: "రియల్-టైమ్ అప్‌డేట్‌లు",
+        feature2Desc: "లైవ్ రైలు షెడ్యూల్స్ మరియు ప్లాట్‌ఫారమ్ సమాచారం",
+        feature3: "సురక్షితం",
+        feature3Desc: "24/7 భద్రత మరియు బాగా నిర్వహించబడిన ప్రాంగణం",
+        connectivityTitle: "కనెక్టివిటీ",
+        amenitiesTitle: "సౌకర్యాలు",
+        reachTitle: "బోలారాం స్టేషన్‌కు ఎలా చేరుకోవాలి",
+        byBus:
+          "హైదరాబాద్ యొక్క వివిధ ప్రాంతాల నుండి TSRTC బస్సుల ద్వారా బాగా కనెక్ట్ చేయబడింది.",
+        byRoad: "సుచిత్ర సర్కిల్ - అల్వాల్ రోడ్‌లో ఉంది.",
+        byTrain:
+          "సికింద్రాబాద్, ఫలక్నుమా మరియు హైదరాబాద్‌లోని ఇతర ప్రధాన స్టేషన్ల నుండి ప్రత్యక్ష సబర్బన్ రైళ్లు.",
+        footerAbout: "స్టేషన్ గురించి",
+        footerAboutText:
+          "బోలారాం రైల్వే స్టేషన్ సికింద్రాబాద్‌లో ఒక ముఖ్యమైన రవాణా కేంద్రంగా పనిచేస్తుంది.",
+        quickLinks: "త్వరిత లింక్‌లు",
+        contactUs: "మమ్మల్ని సంప్రదించండి",
+        openHours: "24/7 తెరిచి ఉంది",
+        copyright:
+          "© 2025 బోలారాం రైల్వే స్టేషన్. అన్ని హక్కులు రిజర్వ్ చేయబడ్డాయి.",
+      },
+    };
+    function changeLanguage(lang) {
+      document.querySelectorAll("[data-i18n]").forEach((el) => {
+        el.innerText = translations[lang][el.dataset.i18n];
+      });
+    }
+  </script>
+</body>
