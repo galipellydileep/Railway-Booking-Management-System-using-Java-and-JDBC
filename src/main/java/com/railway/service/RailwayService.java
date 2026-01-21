@@ -1,75 +1,33 @@
 package com.railway.service;
 
-import com.railway.model.Platform1;
+import com.railway.model.Ticket;
+import com.railway.repository.TicketRepository;
 import org.springframework.stereotype.Service;
 
-import java.sql.*;
-import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class RailwayService {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/windsurfstation";
-    private static final String USER = "root";
-    private static final String PASS = "mysql@31976343!";
+    private final TicketRepository repository;
 
-    public void saveTicket(Platform1 acc) {
-        try (Connection con = DriverManager.getConnection(URL, USER, PASS);
-             PreparedStatement pst = con.prepareStatement(
-                     "INSERT INTO tickets (customer_name, mobile, current_location, destination, booking_date) VALUES (?, ?, ?, ?, ?)")) {
-
-            pst.setString(1, acc.getCustomername());
-            pst.setLong(2, acc.getMobile());
-            pst.setString(3, "Bolaram");
-            pst.setString(4, acc.getDestlocation());
-            pst.setDate(5, Date.valueOf(LocalDate.now()));
-            pst.executeUpdate();
-
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+    public RailwayService(TicketRepository repository) {
+        this.repository = repository;
     }
 
-    public String viewLatestTicket(long mobile) {
-        try (Connection con = DriverManager.getConnection(URL, USER, PASS);
-             PreparedStatement pst = con.prepareStatement(
-                     "SELECT * FROM tickets WHERE mobile=? ORDER BY booking_date DESC LIMIT 1")) {
-
-            pst.setLong(1, mobile);
-            ResultSet rs = pst.executeQuery();
-
-            if (rs.next()) {
-                return """
-                    Customer Name : %s
-                    Mobile        : %d
-                    From          : %s
-                    To            : %s
-                    Date          : %s
-                    """.formatted(
-                        rs.getString("customer_name"),
-                        rs.getLong("mobile"),
-                        rs.getString("current_location"),
-                        rs.getString("destination"),
-                        rs.getDate("booking_date")
-                );
-            }
-            return "No ticket found";
-
-        } catch (Exception e) {
-            return e.getMessage();
-        }
+    // Save ticket to Railway MySQL
+    public void saveTicket(Ticket ticket) {
+        repository.save(ticket);
     }
 
-    public String trainTimings() {
-        return """
-        Morning:
-        7:00 AM  Bolaram to Basara
-        7:30 AM  Bolaram to Karimnagar
-        8:00 AM  Bolaram to Secunderabad
+    // Fetch all tickets
+    public List<Ticket> getAllTickets() {
+        return repository.findAll();
+    }
 
-        Evening:
-        6:00 PM  Bolaram to Tirupati
-        8:00 PM  Bolaram to Kachiguda
-        """;
+    // Fetch ticket by ID
+    public Ticket getTicketById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
     }
 }
