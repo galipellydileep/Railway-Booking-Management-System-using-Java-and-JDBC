@@ -1192,17 +1192,15 @@
           "#membershipForm input[name='mobile']",
         ).value;
 
-        // ✅ BACKEND (for DB insert later)
+        // Pass data to Book Ticket form (backend needs these)
         document.getElementById("customerNameHidden").value = name;
         document.getElementById("mobileHidden").value = mobile;
 
-        // ✅ FRONTEND (for View Ticket UI)
+        // For View Ticket UI
         memberName = name;
 
         bookNav.classList.remove("disabled");
         showPopup("✓ Membership created successfully!");
-
-        this.submit();
 
         const modal = bootstrap.Modal.getInstance(
           document.getElementById("membershipModal"),
