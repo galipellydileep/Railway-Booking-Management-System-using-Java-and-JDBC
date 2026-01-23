@@ -1192,10 +1192,11 @@
           "#membershipForm input[name='mobile']",
         ).value;
 
-        // 🔥 STORE values for Book Ticket
+        // ✅ BACKEND (for DB insert later)
         document.getElementById("customerNameHidden").value = name;
         document.getElementById("mobileHidden").value = mobile;
 
+        // ✅ FRONTEND (for View Ticket UI)
         memberName = name;
 
         bookNav.classList.remove("disabled");
@@ -1206,13 +1207,7 @@
         const modal = bootstrap.Modal.getInstance(
           document.getElementById("membershipModal"),
         );
-        if (modal) {
-          modal.hide();
-        }
-
-        setTimeout(() => {
-          this.reset();
-        }, 500);
+        if (modal) modal.hide();
       });
 
     document
